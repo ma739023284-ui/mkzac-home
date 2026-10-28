@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 公网隧道：开机自启 + 断线自动重连。日志 /tmp/xiaohui-tunnel.out /tmp/xiaohui-tunnel.err -->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.xiaohui.tunnel</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string>
+    <string>-lc</string>
+    <string>cd "/Volumes/HP P900/数字孪生/branch-assistant" &amp;&amp; PORT=8000 ./deploy/tunnel.sh</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+  <key>StandardOutPath</key>
+  <string>/tmp/xiaohui-tunnel.out</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/xiaohui-tunnel.err</string>
+</dict>
+</plist>

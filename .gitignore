@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+.DS_Store
+._*
+data/audit.jsonl
+data/public_url.txt
+deploy/certs/

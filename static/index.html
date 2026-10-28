@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小汇 · 网点智能接待与导览助手</title>
+  <meta name="description" content="网点智能接待与导览助手：材料预检、取号预约、排队进度查询、产品风险说明与投诉应急转办，支持客户与柜员双模式。">
+  <meta name="theme-color" content="#0c2444">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c8a04a'/%3E%3Ctext x='32' y='44' font-size='34' font-family='PingFang SC, sans-serif' font-weight='700' text-anchor='middle' fill='%230c2444'%3E%E6%B1%87%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="rail">
+      <div class="brand">
+        <div class="logo">汇</div>
+        <div>
+          <h1>小汇</h1>
+          <p>网点智能接待与导览助手</p>
+        </div>
+      </div>
+
+      <div class="rail-card">
+        <h2 id="branchName">XX 支行营业部</h2>
+        <ul id="branchInfo"></ul>
+      </div>
+
+      <div class="rail-card">
+        <h3>合规底线</h3>
+        <ul>
+          <li>不荐股荐基、不承诺收益</li>
+          <li>不承诺额度、利率与审批结果</li>
+          <li>不代客操作、不代填风险测评</li>
+          <li>不接收密码、卡号、验证码</li>
+          <li>理财类回答强制风险提示</li>
+        </ul>
+      </div>
+
+      <div class="rail-foot">
+        演示环境 · 产品参数与网点信息均为示例数据<br>
+        正式上线前需接入排队叫号、预约、CRM/核心与工单系统，并经合规审核
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="tabs">
+          <button type="button" data-mode="customer" class="active">客户模式</button>
+          <button type="button" data-mode="teller">柜员模式</button>
+        </div>
+        <div class="topRight">
+          <span class="pill" id="kbInfo">知识库加载中…</span>
+          <button type="button" id="fontToggle">大字模式</button>
+          <span class="who" id="who">客户 · 未登录</span>
+          <button type="button" id="logoutBtn" style="display:none">退出</button>
+        </div>
+      </header>
+
+      <div class="chat" id="chat"></div>
+
+      <div class="composer">
+        <div class="chips" id="chips"></div>
+        <form id="form">
+          <textarea id="input" rows="1" placeholder="用大白话说您想办什么，例如：我想开个工资卡"></textarea>
+          <button type="submit" id="sendBtn">发送</button>
+        </form>
+        <p class="hint">本助手不收取密码、卡号、验证码 · 理财非存款，产品有风险，投资须谨慎</p>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal" id="loginModal">
+    <div class="modal-card">
+      <h3>柜员身份鉴权</h3>
+      <p>柜员模式仅对通过工号 + 动态口令校验的行内人员开放。</p>
+      <input id="empId" placeholder="工号，例如 T1001" autocomplete="off">
+      <input id="otp" type="password" placeholder="6 位动态口令" autocomplete="off">
+      <p class="err" id="loginErr"></p>
+      <div class="modal-actions">
+        <button type="button" id="cancelLogin">取消</button>
+        <button type="button" id="doLogin">进入柜员模式</button>
+      </div>
+      <p class="demo-hint" id="demoHint"></p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

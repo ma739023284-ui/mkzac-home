@@ -1,0 +1,32 @@
+services:
+  assistant:
+    build: .
+    image: xiaohui-assistant:1.0.0
+    container_name: xiaohui-assistant
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      PORT: "8000"
+      DEMO_MODE: "1"
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./data:/app/data
+    security_opt:
+      - no-new-privileges:true
+    read_only: false
+
+  # 对外入口：把 80/443 暴露给公网。证书未就绪时用 nginx.http.conf
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: xiaohui-nginx
+    restart: unless-stopped
+    depends_on:
+      - assistant
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "443:443"
+    volumes:
+      - ${NGINX_CONF:-./deploy/nginx.conf}:/etc/nginx/conf.d/default.conf:ro
+      - ./deploy/certs:/etc/nginx/certs:ro

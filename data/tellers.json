@@ -1,0 +1,21 @@
+{
+  "note": "演示账号：工号 + 6 位动态口令。otp_sha256 = sha256(employee_id + ':' + otp)。上线前必须替换为行内统一身份认证（工号鉴权/OAuth/工作台免登）。",
+  "tellers": [
+    {
+      "employee_id": "T1001",
+      "name": "演示柜员",
+      "role": "teller",
+      "branch": "XX 支行营业部",
+      "otp_sha256": "5eacf2fbd26fdbbeae54d26a61a313cc28b8898ad0d0e71c8db9683ff925e03c",
+      "demo_otp": "888888"
+    },
+    {
+      "employee_id": "T1002",
+      "name": "演示合规岗",
+      "role": "compliance",
+      "branch": "XX 支行营业部",
+      "otp_sha256": "f2c5125a926c21576f17bc6779ec439f59fc61bb0b14728ba8b77a09216b93be",
+      "demo_otp": "666666"
+    }
+  ]
+}

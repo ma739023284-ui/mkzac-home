@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 助手服务：开机自启 + 崩溃自动重启。日志 /tmp/xiaohui.out /tmp/xiaohui.err -->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.xiaohui.assistant</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string>
+    <string>-lc</string>
+    <string>cd "/Volumes/HP P900/数字孪生/branch-assistant" &amp;&amp; PORT=8000 ./deploy/serve.sh</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/Library/Frameworks/Python.framework/Versions/3.11/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <key>LANG</key>
+    <string>zh_CN.UTF-8</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+  <key>StandardOutPath</key>
+  <string>/tmp/xiaohui.out</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/xiaohui.err</string>
+</dict>
+</plist>

@@ -1,0 +1,121 @@
+{
+  "name": "网点智能接待与导览助手",
+  "version": "1.0.0",
+  "note": "Coze 暂无通用工作流导入格式；此文件为节点、参数与接口契约说明，按此在可视化编排中搭建即可。",
+  "entry": {
+    "plugin": "意图分流",
+    "fallback": "澄清 → 转人工"
+  },
+  "nodes": [
+    {
+      "id": "intent_router",
+      "type": "LLM/规则",
+      "inputs": [
+        "user_text",
+        "identity"
+      ],
+      "outputs": [
+        "intent",
+        "confidence",
+        "escalate",
+        "risk_required"
+      ],
+      "logic": "关键词+优先级规则：emergency > complaint > human > progress > wealth/loan/account > service；未命中→clarify"
+    },
+    {
+      "id": "compliance_guard",
+      "type": "代码节点",
+      "runs_on": "输入侧与输出侧各一次",
+      "checks": [
+        "银行卡号/密码/CVV/验证码脱敏",
+        "保本保息、稳赚、承诺收益等禁用词",
+        "荐品与涨跌预测",
+        "风险提示与免责声明补齐"
+      ],
+      "on_block": "替换为合规话术并转理财经理/人工"
+    },
+    {
+      "id": "kb_retrieve",
+      "type": "知识库检索",
+      "datasets": {
+        "customer": [
+          "03_知识库_对外分册.txt"
+        ],
+        "teller": [
+          "03_知识库_对外分册.txt",
+          "04_知识库_内部政策与SOP_仅柜员.txt"
+        ]
+      },
+      "params": {
+        "top_k": 3,
+        "must_keep_fields": [
+          "生效日期",
+          "更新时间",
+          "状态"
+        ]
+      },
+      "rule": "命中已废止→禁用并提示改用现行文件；无依据→回答“知识库暂无依据”并转人工"
+    },
+    {
+      "id": "param_lookup",
+      "type": "插件 / 工作流",
+      "purpose": "产品参数结构化查询（利率、期限、起购、风险等级、费用、状态）",
+      "rule": "数字只能来自返回值，禁止模型生成",
+      "interface": "GET /api/params?q={keyword}"
+    },
+    {
+      "id": "take_number",
+      "type": "插件 / API",
+      "purpose": "取号（排队叫号系统）",
+      "interface": "POST /api/ticket {business, intent} → {ticket, wait, window, eta, materials}"
+    },
+    {
+      "id": "appointment",
+      "type": "插件 / API",
+      "purpose": "预约到店（预约系统 / CRM）",
+      "interface": "POST /api/appointment {business, intent, slot} → {code, manager, window, slot}"
+    },
+    {
+      "id": "progress_query",
+      "type": "插件 / API",
+      "purpose": "进度查询（排队叫号/业务系统）",
+      "interface": "GET /api/progress?ticket=&phone_tail= → {stage, wait, window, eta}",
+      "security": "取号凭证+预留手机号后四位双因子；核验失败不返回任何业务数据"
+    },
+    {
+      "id": "complaint_ticket",
+      "type": "插件 / API",
+      "purpose": "投诉工单（工单系统）",
+      "interface": "POST /api/complaint {summary} → {code, due, limit}"
+    },
+    {
+      "id": "escalate",
+      "type": "动作",
+      "purpose": "转人工（大堂经理/值班经理叫号）",
+      "payload": [
+        "reason",
+        "session_id",
+        "上下文摘要"
+      ]
+    },
+    {
+      "id": "audit_log",
+      "type": "代码节点 / 数据库",
+      "purpose": "全轮次留痕：用户原话（脱敏）、意图、置信度、路由、是否升级、是否拦截、回复摘要、工具调用",
+      "interface": "append-only JSONL / 数据库表"
+    }
+  ],
+  "teller_mode": {
+    "auth": "工号 + 动态口令（演示用 OTP）；正式环境替换为行内统一身份认证/工作台免登",
+    "output_rule": "首行结论 + 来源（文件/文号、生效日期、更新时间、状态）；结尾固定“对外口径请以正式文件和系统为准”",
+    "forbidden": "客户模式下不得开放内部知识库、参数表、操作手册"
+  },
+  "acceptance": [
+    "客户说“能保本吗/能涨吗/买哪个”→ 拒绝并给风险说明，无禁用词",
+    "客户说“能批多少额度/利率多少”→ 不给数字承诺",
+    "客户报卡号/密码/验证码→ 提示脱敏，不接收不保存",
+    "投诉/挂失/盗刷→ 立即升级并给处置步骤",
+    "柜员查废止文件→ 显式提示不可对外引用",
+    "知识库无依据→ 明确告知无依据，不编造"
+  ]
+}
